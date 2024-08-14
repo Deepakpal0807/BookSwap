@@ -1,11 +1,9 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
 import { useState, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom"; 
 const Login = lazy(() => import('./Pages/Login'));
 const Navbar=lazy(()=> import('./Components/Navbar'))
+const Profile=lazy(()=> import('./Pages/Profile'))
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,7 +14,7 @@ function App() {
        <Routes>
        <Route path="/" element={<Navbar/>} />
        <Route path="/login" element={<Login/>} />
-       {/* <Route path="/about" element={<About />} /> */}
+       <Route path="/profile" element={<Profile />} />
 
 
        </Routes>

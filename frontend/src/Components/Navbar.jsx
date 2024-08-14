@@ -8,8 +8,13 @@ const Navbar = () => {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light flex justify-between px-4 py-4 bg-blue-500 items-center">
-      <div className='left text-white font-bold text-2xl font-serif'>
-        Book Swap
+      <div className='left text-white font-bold text-2xl font-serif flex gap-4'>
+        <div>
+          <img src="../Images/favicon-32x32.png" alt="" />
+        </div>
+        <div>
+          Book Swap
+        </div>
       </div>
       <div className='right flex  gap-2'>
         <Tooltip title="Search">
