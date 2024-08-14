@@ -2,24 +2,33 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from "@mui/material";
 import Avatar from "../Images/Avatar.jpg";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
+import app from "../firebase";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import Loader from '../Components/Loader'; // Import the Loader component
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false); // State to manage loading
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [exist, setexist] = useState(false)
+  const [exist, setexist] = useState(false);
   const [validemail, setvalidemail] = useState(true);
-  const [validpassword,setvalidpassword]=useState(true);
+  const [validpassword, setvalidpassword] = useState(true);
+  const navigate = useNavigate(); // Initialize useNavigate
+
   const toggle = () => {
     setIsLogin(!isLogin);
     const preview = document.getElementById("avatar-preview");
     preview.src = Avatar;
   };
 
-  const onSubmit = async(data) => {
+  const onSubmit = async (data) => {
     setvalidemail(true);
     setvalidpassword(true);
+    setLoading(true); // Show loader
+
     const queryParams = new URLSearchParams(data).toString();
-    // console.log(queryParams);
 
     const request = {
       method: 'GET',
@@ -27,41 +36,81 @@ const Login = () => {
         'Content-Type': 'application/json',
       },
     };
-  
-    const response = await fetch(`http://localhost:3000/login?${queryParams}`, request);
-    const result = await response.json();
-    console.log(result);   
 
-    if(result.message==="Invalid email"){
-      setvalidemail(false);
-    }
-   if(result.message==="Invalid password"){
-      setvalidpassword(false);
+    try {
+      const response = await fetch(`http://localhost:3000/login?${queryParams}`, request);
+      const result = await response.json();
+      console.log(result);
+
+      if (result.message === "Invalid email") {
+        setvalidemail(false);
+      } else if (result.message === "Invalid password") {
+        setvalidpassword(false);
+      } else {
+        navigate('/profile'); // Redirect to /profile on successful login
+      }
+    } catch (error) {
+      console.error('Login failed', error);
+    } finally {
+      setLoading(false); // Hide loader
     }
   };
-  const onSignup=async(data)=>{
+
+  const onSignup = async (data) => {
     setexist(false);
-    // console.log("Signup done");
-    // console.log(data);
-    const request={
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      body:JSON.stringify({data})
+    setLoading(true); // Show loader
+
+    const file = data.avatar[0];
+    const storage = getStorage(app);
+
+    if (!file) return;
+
+    const storageRef = ref(storage, `uploads/${file.name}`);
+    let downloadURL = '';
+
+    try {
+        const snapshot = await uploadBytesResumable(storageRef, file);
+        downloadURL = await getDownloadURL(snapshot.ref);
+    } catch (error) {
+        console.error('Upload failed', error);
+        setLoading(false); // Hide loader
+        return; // Exit the function if upload fails
     }
-    const response=await fetch('http://localhost:3000/signup',request);
-    const result=await response.json();
-    console.log(result);
-    if(result.message==="Error creating user"){
-      // console.log("Email connect to other account");
-      setexist(true);
+
+    const signupData = {
+        ...data,
+        avatarUrl: downloadURL // Add the downloadURL to the data object
+    };
+
+    const request = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupData)
+    };
+
+    try {
+        const response = await fetch('http://localhost:3000/signup', request);
+        const result = await response.json();
+        console.log(result);
+
+        if (result.message === "Error creating user") {
+            setexist(true);
+        } else {
+          navigate("/profile");
+        }
+    } catch (error) {
+        console.error('Signup request failed', error);
+    } finally {
+        setLoading(false); // Hide loader
     }
-       
-  }
+  };
+
   return (
     <div className="outerbody flex flex-col justify-center items-center min-h-screen bg-gradient-to-b from-white via-blue-200 to-indigo-500">
-      {isLogin && (
+      {loading && <Loader />} {/* Show loader when loading */}
+      {!loading && isLogin && (
         <div className="flex-grow flex items-center justify-center w-full">
           <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-lg border border-purple-500">
             <div className="text-center">
@@ -71,21 +120,15 @@ const Login = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">Email <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="username@gmail.com" {...register('email', { required: true,minLength:{value:14,message:"email are to short"} })} onChange={(e)=>{
-                  setvalidemail(true);
-
-                }} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="username@gmail.com" {...register('email', { required: true, minLength: { value: 14, message: "Email is too short" } })} onChange={() => setvalidemail(true)} />
                 {errors.email && <span className="text-red-600">{errors.email.message}</span>}
                 {!validemail && <span className='text-red-600'>{"Invalid Email, User not found"}</span>}
               </div>
               <div className="mb-6">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">Password <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 mb-3 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" {...register('password', { required: true ,minLength:{value:8,message:"Password are too short"},maxLength:{value:16,message:"Password are too long"}})}  onChange={(e)=>{
-                  setvalidpassword(true);
-                }}/>
-                {errors.password && <div className="text-red-600">{errors.password.message}</div> }
+                <input className="w-full px-3 py-2 mb-3 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" {...register('password', { required: true, minLength: { value: 8, message: "Password is too short" }, maxLength: { value: 16, message: "Password is too long" } })} onChange={() => setvalidpassword(true)} />
+                {errors.password && <div className="text-red-600">{errors.password.message}</div>}
                 {!errors.password && !validpassword && <div className='text-red-600 text-xs'>{"Wrong Password, Try again"}</div>}
-
               </div>
               <div className="mb-4">
                 <button className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">LOGIN</button>
@@ -97,9 +140,9 @@ const Login = () => {
           </div>
         </div>
       )}
-      {!isLogin && (
+      {!loading && !isLogin && (
         <div className="flex-grow flex items-center justify-center w-full my-6">
-          <div className="w-full max-w-4xl px-8 bg-white  shadow-lg rounded-2xl mx-6 ">
+          <div className="w-full max-w-4xl px-8 bg-white shadow-lg rounded-2xl mx-6">
             <div className="text-center mb-6">
               <h1 className="mb-2 text-2xl font-bold font-serif">Book Swap</h1>
               <h2 className="text-2xl font-bold font-serif">Sign Up</h2>
@@ -117,27 +160,27 @@ const Login = () => {
               </div>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="email">Email <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="username@gmail.com" {...register('email', { required: true,minLength:{value:14,message:"email are to short"}  })} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="username@gmail.com" {...register('email', { required: true, minLength: { value: 14, message: "Email is too short" } })} />
                 {errors.email && <span className="text-red-600">{errors.email.message}</span>}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="password">Password <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" {...register('password', { required: true,minLength:{value:8,message:"email are to short"},maxLength:{value:16,message:"Password is too long"} })} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" {...register('password', { required: true, minLength: { value: 8, message: "Password is too short" }, maxLength: { value: 16, message: "Password is too long" } })} />
                 {errors.password && <span className="text-red-600">{errors.password.message}</span>}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="city">City <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="city" type="text" placeholder="San Francisco" {...register('city', { required: true,minLength:{value:4} })} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="city" type="text" placeholder="San Francisco" {...register('city', { required: true, minLength: { value: 4 } })} />
                 {errors.city && <span className="text-red-600">This field is required</span>}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="state">State <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="state" type="text" placeholder="California" {...register('state', { required: true  })} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="state" type="text" placeholder="California" {...register('state', { required: true })} />
                 {errors.state && <span className="text-red-600">This field is required</span>}
               </div>
               <div className="mb-4">
                 <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="pincode">Pincode <span className='text-red-600'>*</span></label>
-                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="pincode" type="text" placeholder="94101" {...register('pincode', { required: true ,minLength:{value:6,message:"email are to short"},maxLength:6 })} />
+                <input className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" id="pincode" type="text" placeholder="94101" {...register('pincode', { required: true, minLength: { value: 6, message: "Pincode is too short" }, maxLength: { value: 6 } })} />
                 {errors.pincode && <span className="text-red-600">Enter Pincode Correctly</span>}
               </div>
               <div className="mb-4 md:col-span-2">
@@ -149,11 +192,9 @@ const Login = () => {
               </div>
 
               <div className="mb-4 md:col-span-2">
-              <div>
-                {
-                  exist && <div className='text-red-500 font-serif font-semibold text-md py-2 md-2'>{"* Email already in use. Please log in or use another email "}</div>
-                }
-              </div>
+                <div>
+                  {exist && <div className='text-red-500 font-serif font-semibold text-md py-2 md-2'>{"* Email already in use. Please log in or use another email "}</div>}
+                </div>
                 <button className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded-full hover:bg-blue-700 focus:outline-none focus:shadow-outline" type="submit">Sign Up</button>
               </div>
               <div className="mt-6 mb-4 text-center md:col-span-2">
