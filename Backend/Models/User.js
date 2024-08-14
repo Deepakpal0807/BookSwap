@@ -30,6 +30,11 @@ const userSchema = new Schema({
     required: true,
     match: [/^\d{6}$/, 'Please enter a valid 6-digit pincode'],
   },
+  avatarUrl: {
+    type: String,
+  }
+}, {
+  timestamps: true // This option adds createdAt and updatedAt fields
 });
 
 const User = mongoose.model('User', userSchema);
