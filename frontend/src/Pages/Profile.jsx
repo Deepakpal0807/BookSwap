@@ -1,75 +1,82 @@
 import React, { lazy, Suspense } from 'react';
+import { useSelector } from 'react-redux';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { Email as EmailIcon, LocationCity as CityIcon, LocationOn as StateIcon, PinDrop as PincodeIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import Profilebooks from '../Components/Profilebooks';
+import Avatar from "../Images/Avatar.jpg";
+import moment from 'moment';
 
 const Navbar = lazy(() => import('../Components/Navbar'));
 
 const Profile = () => {
-  const userProfile = {
-    name: 'Deepak Pal',
-    email: 'fulsinghdeep00@gmail.com',
-    city: 'Delhi',
-    state: 'Delhi',
-    pincode: '110086',
-    joinedDate: 'August 11, 2024',
+  // Retrieve the user data from Redux
+  const user = useSelector((state) => state.user.user);
+
+  // Function to calculate how long the user has joined us using moment.js
+  const timeSinceJoined = (joinedDate) => {
+    return moment(joinedDate).fromNow(); // e.g., "3 years ago"
   };
 
+  const joinedDate = user.joineddate; // Assume this is in a valid date format
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-auto">
+     <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div class="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
       <Suspense fallback={<div>Loading...</div>}>
         <Navbar />
       </Suspense>
-      <div className="flex-grow mt-4 mx-2">
-        <Grid2 container spacing={2} className="h-full">
-          <Grid2 item xs={12} md={5} lg={4} className="flex h-full">
-            <div className="w-full bg-gray-200 flex flex-col items-center justify-center p-4">
-              <Typography variant="h5" component="h1" className="font-semibold mb-4">
-                Profile
+      <div className="flex-grow  mt-4 mx-2 rounded-xl">
+      <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]"><div class="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]"></div></div>
+        <Grid2 container spacing={2} className="overflow">
+          <Grid2 item xs={12} md={5} lg={4} className="flex h-[86vh]  rounded-3xl">
+            <div className="w-full flex flex-col items-center justify-center p-4 text-white font-serif bg-gray-500 rounded-3xl">
+              <Typography variant="h5" component="h1" className="font-semibold mb-4 text-white">
+                {/* Profile */}
               </Typography>
-              <Avatar sx={{ width: 100, height: 100, marginBottom: '16px' }}>
-                DP
-              </Avatar>
-              <div className="text-center flex flex-col items-center">
-                <h2 className="text-xl font-semibold">{userProfile.name}</h2>
-                <p className="text-gray-600 flex items-center justify-center">
-                  <IconButton>
+              {user.avatarUrl ? (
+                <img src={user.avatarUrl} alt={`${user.name}'s avatar`} className="w-[100px] h-[100px] mb-4 rounded-full border-2 border-white" />
+              ) : (
+                <img src={Avatar} alt={`${user.name}'s avatar`} className="w-[100px] h-[100px] mb-4 rounded-full border-2 border-white" />
+              )}
+              <div className="text-center flex flex-col items-center text-white font-serif">
+                <h2 className="6pp-heading text-2xl font-bold font-serif">{user.name}</h2>
+                <p className="6pp-body  flex items-center justify-center">
+                  <IconButton sx={{ color: 'white' }}>
                     <EmailIcon />
                   </IconButton>
-                  {userProfile.email}
+                  {user.email}
                 </p>
-                <p className="text-gray-600 flex items-center justify-center">
-                  <IconButton>
+                <p className="6pp-body  flex items-center justify-center">
+                  <IconButton sx={{ color: 'white' }}>
                     <StateIcon />
                   </IconButton>
-                  {userProfile.state}
+                  {user.state}
                 </p>
-                <p className="text-gray-600 flex items-center justify-center">
-                  <IconButton>
+                <p className="6pp-body flex items-center justify-center">
+                  <IconButton sx={{ color: 'white' }}>
                     <CityIcon />
                   </IconButton>
-                  {userProfile.city}
+                  {user.city}
                 </p>
-                <p className="text-gray-600 flex items-center justify-center">
-                  <IconButton>
+                <p className="6pp-body flex items-center justify-center ">
+                  <IconButton sx={{ color: 'white' }}>
                     <PincodeIcon />
                   </IconButton>
-                  {userProfile.pincode}
+                  {user.pincode}
                 </p>
-                <p className="text-gray-500 flex items-center justify-center">
-                  <IconButton>
+                <p className="6pp-body  flex items-center justify-center">
+                  <IconButton sx={{ color: 'white' }}>
                     <CalendarIcon />
                   </IconButton>
-                  Joined: {userProfile.joinedDate}
+                  Joined: {timeSinceJoined(joinedDate)}
                 </p>
               </div>
             </div>
           </Grid2>
-          <Grid2 item xs={12} md={7} lg={8} className="flex h-full">
-            <div className="h-full w-full bg-gray-300 flex items-center justify-center">
+          <Grid2 item xs={12} md={7} lg={8} className="flex h-[86vh]">
+            <div className="h-full w-full  flex items-center  border border-black justify-center rounded-3xl">
               <Profilebooks />
             </div>
           </Grid2>

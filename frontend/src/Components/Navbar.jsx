@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { Logout as Logouticon, Add as Addicon, Search as Searchicon, Person as PersonIcon } from "@mui/icons-material";
+import { Logout as Logouticon, Add as Addicon, Search as Searchicon, Person as PersonIcon, Home as Homeicon } from "@mui/icons-material";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -17,6 +17,11 @@ const Navbar = () => {
         </div>
       </div>
       <div className='right flex  gap-2'>
+      <Tooltip title="Search">
+          <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
+          <Homeicon/>
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Search">
           <IconButton size="large" color="inherit" onClick={() => navigate('/search')}>
             <Searchicon />

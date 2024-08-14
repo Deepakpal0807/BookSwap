@@ -8,7 +8,12 @@ import app from "../firebase";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import Loader from '../Components/Loader'; // Import the Loader component
 
+import { useSelector,useDispatch } from 'react-redux';
+import { setUser } from '../redux/User/userslice';
+
 const Login = () => {
+  const dispatch=useDispatch();
+  const user=useSelector((state)=>state.user.value);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false); // State to manage loading
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -40,13 +45,24 @@ const Login = () => {
     try {
       const response = await fetch(`http://localhost:3000/login?${queryParams}`, request);
       const result = await response.json();
-      console.log(result);
-
+       console.log(result);
       if (result.message === "Invalid email") {
         setvalidemail(false);
       } else if (result.message === "Invalid password") {
         setvalidpassword(false);
       } else {
+        console.log(result);
+        dispatch(setUser({
+          name: result.user.name,
+          email: result.user.email,
+          avatarUrl: result.user.avatarUrl,
+          city: result.user.city,
+          state: result.user.state,
+          pincode: result.user.pincode,
+          joineddate:result.user.createdAt
+          
+        }));
+  
         navigate('/profile'); // Redirect to /profile on successful login
       }
     } catch (error) {
@@ -98,6 +114,15 @@ const Login = () => {
         if (result.message === "Error creating user") {
             setexist(true);
         } else {
+          dispatch(setUser({
+            name: result.user.name,
+            email: result.user.email,
+            avatarUrl: result.user.avatarUrl,
+            city: result.user.city,
+            state: result.user.state,
+            pincode: result.user.pincode,
+            joineddate:result.user.createdAt
+          }));
           navigate("/profile");
         }
     } catch (error) {
