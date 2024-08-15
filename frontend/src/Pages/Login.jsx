@@ -27,31 +27,45 @@ const Login = () => {
     const preview = document.getElementById("avatar-preview");
     preview.src = Avatar;
   };
+  
+  
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn);
 
   const onSubmit = async (data) => {
     setvalidemail(true);
     setvalidpassword(true);
     setLoading(true); // Show loader
-
+  
     const queryParams = new URLSearchParams(data).toString();
-
+  
     const request = {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     };
-
+  
     try {
       const response = await fetch(`http://localhost:3000/login?${queryParams}`, request);
       const result = await response.json();
-       console.log(result);
+      console.log(result);
       if (result.message === "Invalid email") {
         setvalidemail(false);
       } else if (result.message === "Invalid password") {
         setvalidpassword(false);
       } else {
-        // console.log(result);
+        // Save user data to local storage
+        localStorage.setItem('user', JSON.stringify({
+          name: result.user.name,
+          email: result.user.email,
+          avatarUrl: result.user.avatarUrl,
+          city: result.user.city,
+          state: result.user.state,
+          pincode: result.user.pincode,
+          joineddate: result.user.createdAt,
+        }));
+  
+        // Dispatch to Redux
         dispatch(setUser({
           name: result.user.name,
           email: result.user.email,
@@ -59,8 +73,7 @@ const Login = () => {
           city: result.user.city,
           state: result.user.state,
           pincode: result.user.pincode,
-          joineddate:result.user.createdAt
-          
+          joineddate: result.user.createdAt
         }));
   
         navigate('/profile'); // Redirect to /profile on successful login
@@ -71,19 +84,20 @@ const Login = () => {
       setLoading(false); // Hide loader
     }
   };
+  
 
   const onSignup = async (data) => {
     setexist(false);
     setLoading(true); // Show loader
-
+  
     const file = data.avatar[0];
     const storage = getStorage(app);
-
+  
     if (!file) return;
-
+  
     const storageRef = ref(storage, `uploads/${file.name}`);
     let downloadURL = '';
-
+  
     try {
         const snapshot = await uploadBytesResumable(storageRef, file);
         downloadURL = await getDownloadURL(snapshot.ref);
@@ -92,12 +106,12 @@ const Login = () => {
         setLoading(false); // Hide loader
         return; // Exit the function if upload fails
     }
-
+  
     const signupData = {
         ...data,
         avatarUrl: downloadURL // Add the downloadURL to the data object
     };
-
+  
     const request = {
         method: 'POST',
         headers: {
@@ -105,15 +119,27 @@ const Login = () => {
         },
         body: JSON.stringify(signupData)
     };
-
+  
     try {
         const response = await fetch('http://localhost:3000/signup', request);
         const result = await response.json();
         console.log(result);
-
+  
         if (result.message === "Error creating user") {
             setexist(true);
         } else {
+          // Save user data to local storage
+          localStorage.setItem('user', JSON.stringify({
+            name: result.user.name,
+            email: result.user.email,
+            avatarUrl: result.user.avatarUrl,
+            city: result.user.city,
+            state: result.user.state,
+            pincode: result.user.pincode,
+            joineddate: result.user.createdAt,
+          }));
+  
+          // Dispatch to Redux
           dispatch(setUser({
             name: result.user.name,
             email: result.user.email,
@@ -121,7 +147,7 @@ const Login = () => {
             city: result.user.city,
             state: result.user.state,
             pincode: result.user.pincode,
-            joineddate:result.user.createdAt
+            joineddate: result.user.createdAt
           }));
           navigate("/profile");
         }
@@ -131,7 +157,7 @@ const Login = () => {
         setLoading(false); // Hide loader
     }
   };
-
+  
   return (
     <div className="outerbody flex flex-col justify-center items-center min-h-screen bg-gradient-to-b from-white via-blue-200 to-indigo-500">
       {loading && <Loader />} {/* Show loader when loading */}
