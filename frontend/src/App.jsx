@@ -7,13 +7,15 @@ import { lazy, Suspense } from 'react';
 // Lazy-loaded components
 const Login = lazy(() => import('./Pages/Login'));
 const Bookadd = lazy(() => import('./Pages/Bookadd'));
-const Navbar = lazy(() => import('./Components/Navbar'));
+
 const Profile = lazy(() => import('./Pages/Profile'));
 const Notfound=lazy(()=> import('./Pages/NotFound'))
+const Home=lazy(()=> import("./Pages/Home"))
 
 import ProtectRoute from "./auth/ProtectRoute";
 import Loader from './Components/Loader';
 import { setUser } from './redux/User/userslice';
+
 
 function App() {
   const dispatch = useDispatch();
@@ -35,7 +37,7 @@ function App() {
         <Routes>
           {/* Protected Routes */}
           <Route element={<ProtectRoute user={isLoggedIn} />}>
-            <Route path="/" element={<Navbar />} />
+            <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/addbook" element={<Bookadd />} />
           </Route>
