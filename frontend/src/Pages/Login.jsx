@@ -51,7 +51,7 @@ const Login = () => {
       } else if (result.message === "Invalid password") {
         setvalidpassword(false);
       } else {
-        console.log(result);
+        // console.log(result);
         dispatch(setUser({
           name: result.user.name,
           email: result.user.email,

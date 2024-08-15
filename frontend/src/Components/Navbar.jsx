@@ -28,7 +28,7 @@ const Navbar = () => {
           </IconButton>
         </Tooltip>
         <Tooltip title="Add">
-          <IconButton size="large" color="inherit" onClick={() => navigate('/add')}>
+          <IconButton size="large" color="inherit" onClick={() => navigate('/addbook')}>
             <Addicon />
           </IconButton>
         </Tooltip>

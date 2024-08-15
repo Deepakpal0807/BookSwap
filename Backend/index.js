@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const login = require('./Routes/login')
 const Signup=require('./Routes/Signup')
+const AddBook=require('./Routes/AddBook');
 // Middleware
 
 // Database connection
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use('/login',login);
 app.use('/signup',Signup);
+app.use('/addbook',AddBook);
 
 // Routes
 app.get('/', (req, res) => {
