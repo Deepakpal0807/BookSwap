@@ -19,14 +19,9 @@ const BookSchema = new Schema({
     required: true,
     maxlength: 100,
   },
-  images: [
-    {
-      url: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  images: [{
+    type: String, // Change this to type String to store image URLs
+  }],
   price: {
     type: Number,
     required: true,
@@ -42,7 +37,6 @@ const BookSchema = new Schema({
 }, {
   timestamps: true // Adds createdAt and updatedAt fields
 });
-
 
 const Book = mongoose.model('Book', BookSchema);
 

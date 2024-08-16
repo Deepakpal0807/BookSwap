@@ -8,38 +8,36 @@ const timeLog = (req, res, next) => {
 };
 router.use(timeLog);
 
-// Import User model
-const User = require('../Models/Book');
+// Import Book model
+const Book = require('../Models/Book');
 
-// GET route for login
+// POST route for adding a book
 router.post('/', async (req, res) => {
+  try {
+    // console.log(req.body);
 
-    console.log(req.body);
-//   try {
-//     const { email, password } = req.query; // Use req.query for GET request parameters
+    const { bookName, authorName, genre, description, price, images } = req.body;
 
-//     if (!email || !password) {
-//       return res.status(400).json({ message: 'Email and password are required' });
-//     }
+    // Create a new Book document
+    const newBook = new Book({
+      bookName,
+      authorName,
+      genre,
+      description,
+      price,
+      images
+    });
 
-//     // Find user by email
-//     const user = await User.findOne({ email });
+    // Save the book to the database
+    await newBook.save();
 
-//     if (!user) {
-//       return res.status(401).json({ message: 'Invalid email' });
-//     }
+    // Return a success response
+    res.status(200).json({ message: 'Book added successfully' });
 
-//     // Check password (assuming plaintext for simplicity; use hashing in production)
-//     if (user.password !== password) {
-//       return res.status(401).json({ message: 'Invalid password' });
-//     }
-
-//     // Return user data on successful login
-//     res.status(200).json({ message: 'Login successful', user });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Error logging in' });
-//   }
+  } catch (error) {
+    console.error('Error adding book:', error);
+    res.status(500).json({ message: 'Error adding book' });
+  }
 });
 
 module.exports = router;

@@ -55,7 +55,7 @@ const Navbar = () => {
         theme="dark"
       />
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-light flex justify-between px-4 py-4 bg-blue-500 items-center">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light flex justify-between px-4 py-4 bg-purple-600 items-center">
         <div className='left text-white font-bold text-2xl font-serif flex gap-4'>
           <div>
             <img src="../Images/favicon-32x32.png" alt="Logo" /> {/* Ensure this path is correct relative to the component */}

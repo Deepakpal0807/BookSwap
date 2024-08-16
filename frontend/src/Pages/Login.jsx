@@ -10,6 +10,8 @@ import Loader from '../Components/Loader'; // Import the Loader component
 
 import { useSelector,useDispatch } from 'react-redux';
 import { setUser } from '../redux/User/userslice';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Login = () => {
@@ -55,6 +57,16 @@ const Login = () => {
       } else if (result.message === "Invalid password") {
         setvalidpassword(false);
       } else {
+        toast.success('Image deleted successfully', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+      });
         // Save user data to local storage
         localStorage.setItem('user', JSON.stringify({
           name: result.user.name,
@@ -129,6 +141,16 @@ const Login = () => {
         if (result.message === "Error creating user") {
             setexist(true);
         } else {
+          toast.success('Image deleted successfully', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+        });
           // Save user data to local storage
           localStorage.setItem('user', JSON.stringify({
             name: result.user.name,
@@ -161,6 +183,19 @@ const Login = () => {
   
   return (
     <div className="outerbody flex flex-col justify-center items-center min-h-screen bg-gradient-to-b from-white via-blue-200 to-indigo-500">
+     
+     <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
       {loading && <Loader />} {/* Show loader when loading */}
       {!loading && isLogin && (
         <div className="flex-grow flex items-center justify-center w-full">

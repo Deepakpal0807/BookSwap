@@ -19,39 +19,72 @@ const Bookadd = () => {
     const onSubmit = async (data) => {
         setisadd(true);
         setissubmit(true);
-
-        // Convert relevant fields to uppercase
-        const formattedData = {
-            ...data,
-            bookName: data.bookName.toUpperCase(),
-            authorName: data.authorName.toUpperCase(),
-            genre: data.genre.toUpperCase(),
-            description: data.description.toUpperCase(),
-        };
-
-        const uploadPromises = images.map((image) => {
-            const storage = getStorage(app);
-            const storageRef = ref(storage, `Book/${image.name}`);
-            return uploadBytesResumable(storageRef, image)
-                .then((snapshot) => getDownloadURL(snapshot.ref))
-                .catch((error) => {
-                    console.error('Upload failed', error);
-                    toast.error('Image upload failed');
-                    throw error;
-                });
-        });
-
+    
         try {
-            const urls = await Promise.all(uploadPromises);
-            setImageUrls(urls);
-
-            const alldata = {
-                ...formattedData, // Use the formatted data with uppercase fields
-                images: urls, // Add the image URLs
+            // Convert relevant fields to uppercase
+            const formattedData = {
+                ...data,
+                bookName: data.bookName.toUpperCase(),
+                authorName: data.authorName.toUpperCase(),
+                genre: data.genre.toUpperCase(),
+                description: data.description.toUpperCase(),
             };
+    
+            const uploadedUrls = [];
+    
+            // Upload images one by one
+            for (const image of images) {
+                const storage = getStorage(app);
+                const storageRef = ref(storage, `Book/${image.name}`);
+    
+                try {
+                    const snapshot = await uploadBytesResumable(storageRef, image);
+                    const downloadURL = await getDownloadURL(snapshot.ref);
+                    uploadedUrls.push(downloadURL);
+                    setImageUrls((prevUrls) => [...prevUrls, downloadURL]); // Incrementally update the state
+                } catch (error) {
+                    console.error('Upload failed', error);
+                    toast.error(`Image ${image.name} upload failed`);
+                    throw error; // Exit the loop if any upload fails
+                }
+            }
+    
+            const alldata = {
+                ...formattedData,
+                images: uploadedUrls, // Use the incrementally collected URLs
+            };
+        //    console.log(alldata);
+            // Send data to the server
+            const request = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(alldata),
+            };
+            const response = await fetch('http://localhost:3000/addbook', request);
+            const result = await response.json();
+            // console.log(result);
 
-            console.log(alldata); // Log the full data including images
-            toast.success('🦄 Book Upload Successfully!', {
+            if(result.message=="Error adding book"){
+                toast.error("Error adding book");
+            }else{
+                toast.success("Book added successfully");
+            }
+    
+            // Show success toast
+            
+    
+            // Reset the form and states
+            reset();
+            setImages([]);
+            setImageUrls([]);
+    
+        } catch (error) {
+            console.error('Failed to upload images:', error);
+    
+            // Show error toast
+            toast.error('An error occurred during the upload process.', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -59,18 +92,20 @@ const Bookadd = () => {
                 pauseOnHover: true,
                 draggable: true,
                 progress: undefined,
-                theme: "light",
+                theme: "dark",
             });
-            // Handle form submission, e.g., send alldata to the server
-            reset();  // Reset form fields
-            setImages([]); // Clear images state
-            setImageUrls([]); // Clear image URLs
-        } catch (error) {
-            console.error('Failed to upload images:', error);
+        } finally {
+            // Ensure loader is hidden
+            setissubmit(false);
+            setisadd(false);
+          
+        
+            // console.log("Loader hidden");  // Debugging log to ensure this is reached
         }
-        setisadd(false);
-        setissubmit(false);
+        
     };
+    
+    
   
     const filechange = (e) => {
         const selectedFile = e.target.files[0];
@@ -105,7 +140,8 @@ const Bookadd = () => {
     };
 
     return (
-        <div className='bg-gray-300'>
+        <div className=''>
+        
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -121,55 +157,73 @@ const Bookadd = () => {
             <div>
                 <Navbar />
             </div>
-           {issubmit && <div className='h-[100vh]'>
-             <Loader/>
+            {issubmit && <div className='h-[90vh]'>
+                <Loader />
             </div>}
-            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw] ">
+            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw] h-[95vh]  my-auto  w-[100vw] mt-2">
+                <div class="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-lg font-serif font-bold">
-                            Book Name <span className='text-red-600'>*</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder='The lost life...'
-                            {...register('bookName', { required: true })}
-                            className="w-full p-2 border border-black rounded-2xl"
-                        />
-                        {errors.bookName && <span className="text-red-500">Book name is required</span>}
+                    <div className="flex flex-col lg:flex-row lg:space-x-4">
+                        <div className="mb-4 w-full">
+                            <label className="block text-gray-700 text-lg font-serif font-bold">
+                                Book Name <span className='text-red-600'>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                placeholder='The lost life...'
+                                {...register('bookName', { required: true })}
+                                className="w-full p-2 border border-black rounded-2xl"
+                            />
+                            {errors.bookName && <span className="text-red-500">Book name is required</span>}
+                        </div>
+
+                        <div className="mb-4 w-full">
+                            <label className="block text-gray-700 text-lg font-serif font-bold">
+                                Author Name <span className='text-red-600'>*</span>
+                            </label>
+                            <input
+                                type="text"
+                                placeholder='James Clear....'
+                                {...register('authorName', { required: true })}
+                                className="w-full p-2 border border-black rounded-2xl"
+                            />
+                            {errors.authorName && <span className="text-red-500">Author name is required</span>}
+                        </div>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-lg font-serif font-bold">
-                            Author Name <span className='text-red-600'>*</span>
-                        </label>
-                        <input
-                            type="text"
-                            placeholder='James Clear....'
-                            {...register('authorName', { required: true })}
-                            className="w-full p-2 border border-black rounded-2xl"
-                        />
-                        {errors.authorName && <span className="text-red-500">Author name is required</span>}
-                    </div>
+                    <div className="flex flex-col lg:flex-row lg:space-x-4">
+                        <div className="mb-4 w-full">
+                            <label className="block text-gray-700 text-lg font-serif font-bold">
+                                Genre <span className='text-red-600'>*</span>
+                            </label>
+                            <select
+                                {...register('genre', { required: true })}
+                                className="w-full p-2 border border-black rounded-2xl"
+                            >
+                                <option value="">Select Genre</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="non-fiction">Non-Fiction</option>
+                                <option value="mystery">Mystery</option>
+                                <option value="science-fiction">Science Fiction</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="biography">Biography</option>
+                                <option value="other">Other</option>
+                            </select>
+                            {errors.genre && <span className="text-red-500">Genre is required</span>}
+                        </div>
 
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-lg font-serif font-bold">
-                            Genre <span className='text-red-600'>*</span>
-                        </label>
-                        <select
-                            {...register('genre', { required: true })}
-                            className="w-full p-2 border border-black rounded-2xl"
-                        >
-                            <option value="">Select Genre</option>
-                            <option value="fiction">Fiction</option>
-                            <option value="non-fiction">Non-Fiction</option>
-                            <option value="mystery">Mystery</option>
-                            <option value="science-fiction">Science Fiction</option>
-                            <option value="fantasy">Fantasy</option>
-                            <option value="biography">Biography</option>
-                            <option value="other">Other</option>
-                        </select>
-                        {errors.genre && <span className="text-red-500">Genre is required</span>}
+                        <div className="mb-4 w-full">
+                            <label className="block text-gray-700 text-lg font-serif font-bold">
+                                Price <span className='text-red-600'>*</span>
+                            </label>
+                            <input
+                                placeholder='9,XX'
+                                type="number"
+                                {...register('price', { required: true, min: 0 })}
+                                className="w-full p-2 border border-black rounded-2xl"
+                            />
+                            {errors.price && <span className="text-red-500">Price is required and must be a positive number</span>}
+                        </div>
                     </div>
 
                     <div className="mb-4">
@@ -191,18 +245,6 @@ const Bookadd = () => {
                         {errors.description && errors.description.type === 'maxLength' && (
                             <span className="text-red-500">Description cannot exceed 100 words</span>
                         )}
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-lg font-serif font-bold">
-                            Price <span className='text-red-600'>*</span>
-                        </label>
-                        <input
-                            placeholder='9,XX'
-                            type="number"
-                            {...register('price', { required: true, min: 0 })}
-                            className="w-full p-2 border border-black rounded-2xl"
-                        />
-                        {errors.price && <span className="text-red-500">Price is required and must be a positive number</span>}
                     </div>
 
                     <div className="mb-4">
@@ -267,5 +309,6 @@ const Bookadd = () => {
         </div>
     );
 };
+
 
 export default Bookadd;
