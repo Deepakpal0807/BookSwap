@@ -160,7 +160,7 @@ const Bookadd = () => {
             {issubmit && <div className='h-[90vh]'>
                 <Loader />
             </div>}
-            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw] h-[95vh]  my-auto  w-[100vw] mt-2">
+            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw]   my-auto  w-[100vw] mt-2">
                 <div class="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col lg:flex-row lg:space-x-4">
