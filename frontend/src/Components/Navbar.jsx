@@ -83,7 +83,7 @@ const Navbar = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="Profile">
-            <IconButton size="large" color="inherit" onClick={() => navigate(`profile/${user.userid}`)}>
+            <IconButton size="large" color="inherit" onClick={() => navigate(`/profile/${user.userid}`)}>
               <PersonIcon />
             </IconButton>
           </Tooltip>

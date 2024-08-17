@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const login = require('./Routes/login')
 const Signup=require('./Routes/Signup')
 const AddBook=require('./Routes/AddBook');
+const Search=require('./Routes/Search');
 // Middleware
 
 // Database connection
@@ -26,6 +27,7 @@ app.use(cors());
 app.use('/login',login);
 app.use('/signup',Signup);
 app.use('/addbook',AddBook);
+app.use('/Search',Search);
 
 // Routes
 app.get('/', (req, res) => {

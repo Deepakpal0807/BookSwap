@@ -10,11 +10,13 @@ const Bookadd = lazy(() => import('./Pages/Bookadd'));
 const Profile = lazy(() => import('./Pages/Profile'));
 const Notfound = lazy(() => import('./Pages/NotFound'));
 const Home = lazy(() => import('./Pages/Home'));
+const Search = lazy(() => import('./Pages/Search'));
 
 import ProtectRoute from "./auth/ProtectRoute";
 import Loader from './Components/Loader';
 import { setUser } from './redux/User/userslice';
-import Profileurl from './Components/profileurl';
+
+
 
 function App() {
   const dispatch = useDispatch();
@@ -76,6 +78,14 @@ function App() {
             element={
               <ProtectRoute user={isLoggedIn}>
                 <Profile />
+              </ProtectRoute>
+            } 
+          />
+          <Route 
+            path="/search" 
+            element={
+              <ProtectRoute user={isLoggedIn}>
+                <Search />
               </ProtectRoute>
             } 
           />

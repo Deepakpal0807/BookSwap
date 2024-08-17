@@ -146,7 +146,7 @@ const Bookadd = () => {
 
     return (
         <div className=''>
-        <div class="absolute inset-0 -z-10 h-[165vh] xs:h-[140vh] md:h-[140vh] lg:h-[10vh] w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+        <div class="absolute inset-0 -z-10 h-[165vh] xs:h-[140vh] md:h-[140vh] lg:h-[120vh] w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
 
             <ToastContainer
                 position="top-right"
@@ -207,13 +207,16 @@ const Bookadd = () => {
                                 className="w-full p-2 border border-black rounded-2xl"
                             >
                                 <option value="">Select Genre</option>
-                                <option value="fiction">Fiction</option>
-                                <option value="non-fiction">Non-Fiction</option>
-                                <option value="mystery">Mystery</option>
-                                <option value="science-fiction">Science Fiction</option>
-                                <option value="fantasy">Fantasy</option>
-                                <option value="biography">Biography</option>
-                                <option value="other">Other</option>
+              <option value="Fiction">Fiction</option>
+              <option value="Non-Fiction">Non-Fiction</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Science Fiction">Science Fiction</option>
+              <option value="Mystery">Mystery</option>
+              <option value="Biography">Biography</option>
+              <option value="History">History</option>
+              <option value="Romance">Romance</option>
+              <option value="Horror">Horror</option>
+              <option value="Horror">Other</option>
                             </select>
                             {errors.genre && <span className="text-red-500">Genre is required</span>}
                         </div>
