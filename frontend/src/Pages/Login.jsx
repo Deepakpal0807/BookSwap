@@ -67,6 +67,7 @@ const Login = () => {
           progress: undefined,
           theme: "dark",
       });
+      console.log(result.user._id);
         // Save user data to local storage
         localStorage.setItem('user', JSON.stringify({
           name: result.user.name,
@@ -76,6 +77,7 @@ const Login = () => {
           state: result.user.state,
           pincode: result.user.pincode,
           joineddate: result.user.createdAt,
+          userid:result.user._id
         }));
   
         // Dispatch to Redux
@@ -86,7 +88,8 @@ const Login = () => {
           city: result.user.city,
           state: result.user.state,
           pincode: result.user.pincode,
-          joineddate: result.user.createdAt
+          joineddate: result.user.createdAt,
+          userid:result.user._id
         }));
   
         navigate('/profile'); // Redirect to /profile on successful login
@@ -160,6 +163,8 @@ const Login = () => {
             state: result.user.state,
             pincode: result.user.pincode,
             joineddate: result.user.createdAt,
+            userid:result.user._id
+
           }));
   
           // Dispatch to Redux
@@ -170,7 +175,8 @@ const Login = () => {
             city: result.user.city,
             state: result.user.state,
             pincode: result.user.pincode,
-            joineddate: result.user.createdAt
+            joineddate: result.user.createdAt,
+            userid:result.user._id
           }));
           navigate("/profile");
         }

@@ -2,14 +2,16 @@ import React, { useEffect } from 'react';
 import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { Logout as LogoutIcon, Add as AddIcon, Search as SearchIcon, Person as PersonIcon, Home as HomeIcon } from "@mui/icons-material";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearUser, setUser } from '../redux/User/userslice'; // Adjust the import path as needed
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
 
   const logout = () => {
     localStorage.removeItem('user');
@@ -81,7 +83,7 @@ const Navbar = () => {
             </IconButton>
           </Tooltip>
           <Tooltip title="Profile">
-            <IconButton size="large" color="inherit" onClick={() => navigate('/profile')}>
+            <IconButton size="large" color="inherit" onClick={() => navigate(`profile/${user.userid}`)}>
               <PersonIcon />
             </IconButton>
           </Tooltip>

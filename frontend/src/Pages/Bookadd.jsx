@@ -146,7 +146,7 @@ const Bookadd = () => {
 
     return (
         <div className=''>
-        <div class="absolute inset-0 -z-10 h-[165vh] xs:h-[140vh] md:h-[140vh] lg:h-[120vh] w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+        <div class="absolute inset-0 -z-10 h-[165vh] xs:h-[140vh] md:h-[140vh] lg:h-[10vh] w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
 
             <ToastContainer
                 position="top-right"

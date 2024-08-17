@@ -75,7 +75,7 @@ function App() {
             path="/profile/:profileId" 
             element={
               <ProtectRoute user={isLoggedIn}>
-                <Profileurl />
+                <Profile />
               </ProtectRoute>
             } 
           />

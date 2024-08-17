@@ -8,7 +8,8 @@ const initialState = {
     city: '',
     state: '',
     pincode: '',
-    joineddate:''
+    joineddate:'',
+    userid:''
   },
   isLoggedIn: false,
 };

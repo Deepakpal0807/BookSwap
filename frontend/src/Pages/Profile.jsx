@@ -1,8 +1,10 @@
-import React, { lazy, Suspense, useState } from "react";
+import React, { lazy, Suspense, useState,useEffect } from "react";
 import { useSelector } from "react-redux";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import {useNavigate, useParams } from "react-router-dom";
+
 import {
   Email as EmailIcon,
   LocationCity as CityIcon,
@@ -19,6 +21,21 @@ const Navbar = lazy(() => import("../Components/Navbar"));
 const Profile = () => {
   // Retrieve the user data from Redux
   const user = useSelector((state) => state.user.user);
+  const localuser = JSON.parse(localStorage.getItem('user'));
+    console.log(localuser);
+  const { profileId } = useParams();
+  console.log(profileId);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (localuser?.userid !== profileId) {
+      console.log("IDs are not the same");
+      navigate('/notfound');
+    }
+  }, [localuser, profileId, navigate]);
+
+  
+  // console.log(user);
   const [isClick, setIsClick] = useState(false);
 
   // Function to calculate how long the user has joined us using moment.js
@@ -106,6 +123,12 @@ const Profile = () => {
                     </IconButton>
                     Joined: {timeSinceJoined(joinedDate)}
                   </p>
+                  {/* <p className="6pp-body flex items-center justify-center">
+                    <IconButton sx={{ color: "white" }}>
+                      <CityIcon />
+                    </IconButton>
+                    {user.userid}
+                  </p> */}
                 </div>
               )}
             </div>
