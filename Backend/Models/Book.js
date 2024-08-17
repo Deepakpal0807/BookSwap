@@ -27,13 +27,12 @@ const BookSchema = new Schema({
     required: true,
     min: 0,
   },
-  userEmails: [
+  userEmails:
     {
       type: String,
       required: true,
-      match: [/.+@.+\..+/, 'Please enter a valid email address'],
+   
     },
-  ],
 }, {
   timestamps: true // Adds createdAt and updatedAt fields
 });

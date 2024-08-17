@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
   try {
     // console.log(req.body);
 
-    const { bookName, authorName, genre, description, price, images } = req.body;
+    const { bookName, authorName, genre, description, price, images, userEmails } = req.body;
 
     // Create a new Book document
     const newBook = new Book({
@@ -24,8 +24,9 @@ router.post('/', async (req, res) => {
       authorName,
       genre,
       description,
+      images,
       price,
-      images
+      userEmails
     });
 
     // Save the book to the database

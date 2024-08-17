@@ -2,6 +2,7 @@ import React, { lazy, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from "react-redux";
 
 const Navbar = lazy(() => import('../Components/Navbar'));
 import app from "../firebase";
@@ -15,6 +16,8 @@ const Bookadd = () => {
     const [imageUrls, setImageUrls] = useState([]);
     const [isadd, setisadd] = useState(false);
     const [issubmit,setissubmit]=useState(false);
+    const user = useSelector((state) => state.user.user.email);
+  
   
     const onSubmit = async (data) => {
         setisadd(true);
@@ -51,9 +54,11 @@ const Bookadd = () => {
     
             const alldata = {
                 ...formattedData,
-                images: uploadedUrls, // Use the incrementally collected URLs
+                images: uploadedUrls,
+                userEmails:user 
+                // Use the incrementally collected URLs
             };
-        //    console.log(alldata);
+           console.log(alldata);
             // Send data to the server
             const request = {
                 method: 'POST',
@@ -141,7 +146,8 @@ const Bookadd = () => {
 
     return (
         <div className=''>
-        
+        <div class="absolute inset-0 -z-10 h-[165vh] xs:h-[140vh] md:h-[140vh] lg:h-[120vh] w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -160,8 +166,8 @@ const Bookadd = () => {
             {issubmit && <div className='h-[90vh]'>
                 <Loader />
             </div>}
-            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw]   my-auto  w-[100vw] mt-2">
-                <div class="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+            {!issubmit && <div className="p-8 container md:w-[90vw] m-auto lg:w-[50vw]   my-auto  w-[100vw] mt-2 ">
+                
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col lg:flex-row lg:space-x-4">
                         <div className="mb-4 w-full">
@@ -270,24 +276,29 @@ const Bookadd = () => {
                         )}
                     </div>
 
-                    <div className="mb-4 flex flex-col sm:flex-row w-full justify-around">
-                        {images.map((image, index) => (
-                            <div key={index} className="mb-4 flex items-center sm:flex-col sm:space-y-3 sm:items-center sm:justify-center">
-                                <img
-                                    src={URL.createObjectURL(image)}
-                                    alt={`Uploaded ${index + 1}`}
-                                    className="w-20 h-20 object-cover rounded-lg mr-4"
-                                />
-                                <button
-                                    type="button"
-                                    className="bg-red-500 text-white p-1 rounded"
-                                    onClick={() => removeImage(index)}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                    <div className="mb-4 flex xs:flex-col sm:flex-row w-full justify-around flex-wrap mx-2">
+  {images.map((image, index) => (
+    <div
+      key={index}
+      className="mb-4 flex items-center sm:flex-col sm:space-y-3 space-y-0 sm:space-x-0 justify-center sm:items-center mx-5"
+    >
+      <img
+        src={URL.createObjectURL(image)}
+        alt={`Uploaded ${index + 1}`}
+        className="w-20 h-20 object-cover rounded-lg sm:mr-0 mr-4"
+      />
+      <button
+        type="button"
+        className="bg-red-500 text-white p-1 rounded mt-0 sm:mt-2"
+        onClick={() => removeImage(index)}
+      >
+        Delete
+      </button>
+    </div>
+  ))}
+</div>
+
+
 
                     <div className="flex items-center justify-center">
                         <button
