@@ -198,42 +198,51 @@ const Bookadd = () => {
                     </div>
 
                     <div className="flex flex-col lg:flex-row lg:space-x-4">
-                        <div className="mb-4 w-full">
-                            <label className="block text-gray-700 text-lg font-serif font-bold">
-                                Genre <span className='text-red-600'>*</span>
-                            </label>
-                            <select
-                                {...register('genre', { required: true })}
-                                className="w-full p-2 border border-black rounded-2xl"
-                            >
-                                <option value="">Select Genre</option>
-              <option value="Fiction">Fiction</option>
-              <option value="Non-Fiction">Non-Fiction</option>
-              <option value="Fantasy">Fantasy</option>
-              <option value="Science Fiction">Science Fiction</option>
-              <option value="Mystery">Mystery</option>
-              <option value="Biography">Biography</option>
-              <option value="History">History</option>
-              <option value="Romance">Romance</option>
-              <option value="Horror">Horror</option>
-              <option value="Horror">Other</option>
-                            </select>
-                            {errors.genre && <span className="text-red-500">Genre is required</span>}
-                        </div>
+  <div className="mb-4 w-full">
+    <label className="block text-gray-700 text-lg font-serif font-bold">
+      Genre <span className='text-red-600'>*</span>
+    </label>
+    <select
+      {...register('genre', { required: true })}
+      className="w-full p-2 border border-black rounded-2xl"
+    >
+      <option value="">Select Genre</option>
+      <option value="Fiction">Fiction</option>
+      <option value="Non-Fiction">Non-Fiction</option>
+      <option value="Fantasy">Fantasy</option>
+      <option value="Science Fiction">Science Fiction</option>
+      <option value="Mystery">Mystery</option>
+      <option value="Thriller">Thriller</option>
+      <option value="Romance">Romance</option>
+      <option value="Horror">Horror</option>
+      <option value="Biography">Biography</option>
+      <option value="Autobiography">Autobiography</option>
+      <option value="Self-Help">Self-Help</option>
+      <option value="History">History</option>
+      <option value="Travel">Travel</option>
+      <option value="Poetry">Poetry</option>
+      <option value="Children's Books">Children's Books</option>
+      <option value="Young Adult">Young Adult</option>
+      <option value="Graphic Novels">Graphic Novels</option>
+      <option value="Other">Other</option>
+    </select>
+    {errors.genre && <span className="text-red-500">Genre is required</span>}
+  </div>
 
-                        <div className="mb-4 w-full">
-                            <label className="block text-gray-700 text-lg font-serif font-bold">
-                                Price <span className='text-red-600'>*</span>
-                            </label>
-                            <input
-                                placeholder='9,XX'
-                                type="number"
-                                {...register('price', { required: true, min: 0 })}
-                                className="w-full p-2 border border-black rounded-2xl"
-                            />
-                            {errors.price && <span className="text-red-500">Price is required and must be a positive number</span>}
-                        </div>
-                    </div>
+  <div className="mb-4 w-full">
+    <label className="block text-gray-700 text-lg font-serif font-bold">
+      Price <span className='text-red-600'>*</span>
+    </label>
+    <input
+      placeholder='9,XX'
+      type="number"
+      {...register('price', { required: true, min: 0 })}
+      className="w-full p-2 border border-black rounded-2xl"
+    />
+    {errors.price && <span className="text-red-500">Price is required and must be a positive number</span>}
+  </div>
+</div>
+
 
                     <div className="mb-4">
                         <label className="block text-gray-700 text-lg font-serif font-bold">

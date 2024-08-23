@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearUser, setUser } from '../redux/User/userslice'; // Adjust the import path as needed
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { clearBooksByGenre, clearUserEmail } from "../redux/Book/Bookslice";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,21 +14,24 @@ const Navbar = () => {
   const user = useSelector((state) => state.user.user);
 
   const logout = () => {
-    localStorage.removeItem('user');
-    dispatch(clearUser()); // Clears the user data in Redux
-    toast.success('Logged out successfully!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-      transition: Bounce,
-    });
-
-    navigate('/login'); // Redirects to the login page
+    if (window.confirm("Are you sure you want to logout?")) {
+      localStorage.removeItem('user');
+      dispatch(clearUser()); // Clears the user data in Redux
+      dispatch(clearBooksByGenre());
+      dispatch(clearUserEmail());
+      toast.success('Logged out successfully!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+      navigate('/login'); // Redirects to the login page
+    }
   };
 
   useEffect(() => {

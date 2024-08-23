@@ -4,6 +4,8 @@ import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import {useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { setBooksByGenre } from '../redux/Book/Bookslice';
 
 import {
   Email as EmailIcon,
@@ -26,12 +28,52 @@ const Profile = () => {
   const { profileId } = useParams();
   console.log(profileId);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  
+      
+  const Books = async () => {
+    try {
+      const request = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+  
+      const userEmails = user.email;
+      const response = await fetch(`http://localhost:3000/books?email=${userEmails}`, request);
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+  
+      // Group books by genre
+      const booksByGenre = data.reduce((acc, book) => {
+        const genre = book.genre.toUpperCase(); // Ensure genre is in uppercase to match Redux state keys
+        if (!acc[genre]) {
+          acc[genre] = []; // Initialize array if genre doesn't exist in accumulator
+        }
+        acc[genre].push(book); // Push book into the corresponding genre array
+        return acc;
+      }, {});
+  
+      // Dispatch the grouped books data to the Redux store
+      dispatch(setBooksByGenre(booksByGenre));
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
+  };
+  
   
   useEffect(() => {
     if (localuser?.userid !== profileId) {
       console.log("IDs are not the same");
       navigate('/notfound');
     }
+    Books();
   }, [localuser, profileId, navigate]);
 
   
@@ -134,7 +176,7 @@ const Profile = () => {
             </div>
           </Grid2>
           <Grid2 item xs={12} md={7} lg={8} className="flex h-[86vh]">
-            <div className="h-full w-full flex items-center border border-black justify-center rounded-3xl">
+            <div className="w-full  border border-black justify-center rounded-3xl overflow-scroll scrollbar-hide">
               <Profilebooks />
             </div>
           </Grid2>

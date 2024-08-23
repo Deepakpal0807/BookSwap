@@ -8,6 +8,7 @@ const login = require('./Routes/login')
 const Signup=require('./Routes/Signup')
 const AddBook=require('./Routes/AddBook');
 const Search=require('./Routes/Search');
+const Book=require("./Routes/Books")
 // Middleware
 
 // Database connection
@@ -28,6 +29,7 @@ app.use('/login',login);
 app.use('/signup',Signup);
 app.use('/addbook',AddBook);
 app.use('/Search',Search);
+app.use('/books',Book);
 
 // Routes
 app.get('/', (req, res) => {
