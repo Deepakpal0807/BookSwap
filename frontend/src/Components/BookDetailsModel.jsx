@@ -54,6 +54,9 @@ const BookDetailsModal = ({ book, onClose }) => {
             Price: ₹{book.price}
           </h2>
           <h2 className="text-white font-serif text-lg md:text-xl mb-2">
+            Owner : {book.userEmails}
+          </h2>
+          <h2 className="text-white font-serif text-lg md:text-xl mb-2">
             Updated: {timeSinceJoined(book.createdAt)}
           </h2>
         </div>

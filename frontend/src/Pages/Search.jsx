@@ -1,12 +1,14 @@
-import React, { lazy, useState, useEffect } from 'react';
+import React, { lazy, useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 
 const Navbar = lazy(() => import('../Components/Navbar'));
+const BookDetailsModal = lazy(() => import("../Components/BookDetailsModel"));
 
 const Search = () => {
   const { register, handleSubmit } = useForm();
   const [searchResults, setSearchResults] = useState([]);
   const [backgroundHeight, setBackgroundHeight] = useState('100vh'); // Default height
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const updateBackgroundHeight = (resultsLength) => {
     // Determine screen width
@@ -17,6 +19,14 @@ const Search = () => {
     const baseHeight = resultsLength > 0 ? Math.max(resultsLength * 43, 100) + 20 : 100;
     const newHeight = isSmallScreen ? `${baseHeight * 1.2}vh` : `${baseHeight}vh`;
     setBackgroundHeight(newHeight);
+  };
+
+  const handleBookClick = (book) => {
+    setSelectedBook(book); // Set the selected book for the modal
+  };
+
+  const handleCloseModal = () => {
+    setSelectedBook(null); // Clear the selected book to close the modal
   };
 
   const onSubmit = async (data) => {
@@ -55,7 +65,7 @@ const Search = () => {
   useEffect(() => {
     // Update background height on window resize
     const handleResize = () => updateBackgroundHeight(searchResults.length);
-
+    console.log(searchResults);
     // Add resize event listener
     window.addEventListener('resize', handleResize);
 
@@ -63,62 +73,74 @@ const Search = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [window.innerWidth]); // Dependency array includes searchResults.length to update height when search results change
+  }, [searchResults.length]); // Update background height when search results change
 
   return (
-    <div>
+    <div className="w-full overflow-x-hidden"> {/* Added overflow-x-hidden */}
       <Navbar />
-      <div className="px-8 mx-auto pt-8">
-        <div
-          className="absolute inset-0 -z-10 w-full items-center px-5 py-24"
-          style={{ background: 'radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%)', height: backgroundHeight }}
-        ></div>
+      
+      <div className="flex flex-col justify-center items-center"
+        style={{ background: 'radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%)' }}>
+        <div className="absolute inset-0 -z-10 h-full w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+        <div className="px-8 pt-8 w-full"> {/* Added w-full */}
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4">
-          <div className="flex flex-col md:flex-row gap-3 w-[80vw] mx-auto">
-            <input
-              type="text"
-              {...register('bookName')}
-              placeholder="Search by Book Name"
-              className="w-full p-2 border rounded-2xl border-white"
-            />
-            <input
-              type="text"
-              {...register('authorName')}
-              placeholder="Search by Author Name"
-              className="w-full p-2 border border-gray-300 rounded-2xl"
-            />
-          </div>
-          <div className="flex flex-col md:flex-row gap-3 w-[80vw] mx-auto">
-            <select
-              {...register('genre')}
-              className="w-full p-2 border border-gray-300 rounded-3xl"
-            >
-              <option value="">Select Genre</option>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 w-full"> {/* Added w-full */}
+            <div className="flex flex-col md:flex-row gap-3 w-[80vw] mx-auto">
+              <input
+                type="text"
+                {...register('bookName')}
+                placeholder="Search by Book Name"
+                className="w-full p-2 border rounded-2xl border-white"
+              />
+              <input
+                type="text"
+                {...register('authorName')}
+                placeholder="Search by Author Name"
+                className="w-full p-2 border border-gray-300 rounded-2xl"
+              />
+            </div>
+            <div className="flex flex-col md:flex-row gap-3 w-[80vw] mx-auto">
+              <select
+                {...register('genre')}
+                className="w-full p-2 border border-gray-300 rounded-3xl"
+              >
+                 <option value="">Select Genre</option>
               <option value="Fiction">Fiction</option>
               <option value="Non-Fiction">Non-Fiction</option>
               <option value="Fantasy">Fantasy</option>
               <option value="Science Fiction">Science Fiction</option>
               <option value="Mystery">Mystery</option>
-              <option value="Biography">Biography</option>
-              <option value="History">History</option>
+              <option value="Thriller">Thriller</option>
               <option value="Romance">Romance</option>
               <option value="Horror">Horror</option>
+              <option value="Biography">Biography</option>
+              <option value="Autobiography">Autobiography</option>
+              <option value="Self-Help">Self-Help</option>
+              <option value="History">History</option>
+              <option value="Travel">Travel</option>
+              <option value="Poetry">Poetry</option>
+              <option value="Children's Books">Children's Books</option>
+              <option value="Young Adult">Young Adult</option>
+              <option value="Graphic Novels">Graphic Novels</option>
               <option value="Other">Other</option>
-            </select>
-            <button type="submit" className="p-2 bg-purple-600 text-white rounded-2xl w-full md:w-[30%]">
-              Search
-            </button>
-          </div>
-        </form>
-      </div>
-      <div className="allbooks mt-8">
+                {/* other options */}
+              </select>
+              <button type="submit" className="p-2 bg-purple-600 text-white rounded-2xl w-full md:w-[30%]">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div className="allbooks mt-8 w-full"
+      >
         {searchResults.length > 0 ? (
           <ul>
             {searchResults.map((book, index) => (
               <div
                 key={index}
-                className='text-white flex flex-col lg:flex-row md:mx-[10vw] mx-[5vw] mb-4 border-white border-2 rounded-2xl bg-gray-800'
+                className='text-white flex flex-col lg:flex-row md:mx-[11vw] mx-[6vw] mb-4 border-white border-2 rounded-2xl bg-gray-800 cursor-pointer'
+                onClick={() => handleBookClick(book)} // Corrected this line
               >
                 <div className='image-container flex flex-col md:flex-row w-full md:w-[40vw] px-8 my-4'>
                   {/* Only show one image on small screens and two images on larger screens */}
@@ -157,9 +179,20 @@ const Search = () => {
         ) : (
           <p>No results found</p>
         )}
+        <Suspense fallback={<div>Loading...</div>}>
+          {selectedBook && (
+            <BookDetailsModal book={selectedBook} onClose={handleCloseModal} />
+          )}
+        </Suspense>
+      </div>
       </div>
     </div>
   );
 };
 
 export default Search;
+
+
+
+
+
