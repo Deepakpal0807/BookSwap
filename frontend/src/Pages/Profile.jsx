@@ -87,7 +87,7 @@ const Profile = () => {
             <Profileinfo />
           </Grid2>
           <Grid2 item xs={12} md={7} lg={8} className="flex h-[86vh]">
-            <div className="w-full border border-black justify-center rounded-3xl overflow-scroll scrollbar-hide">
+            <div className="w-full border border-white justify-center rounded-3xl overflow-scroll scrollbar-hide">
               <Profilebooks onBookClick={handleBookClick} />
             </div>
           </Grid2>
