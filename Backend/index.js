@@ -9,6 +9,7 @@ const Signup=require('./Routes/Signup')
 const AddBook=require('./Routes/AddBook');
 const Search=require('./Routes/Search');
 const Book=require("./Routes/Books")
+const getallbook=require('./Routes/getallbook')
 // Middleware
 
 // Database connection
@@ -30,6 +31,7 @@ app.use('/signup',Signup);
 app.use('/addbook',AddBook);
 app.use('/Search',Search);
 app.use('/books',Book);
+app.use('/getallbook',getallbook);
 
 // Routes
 app.get('/', (req, res) => {

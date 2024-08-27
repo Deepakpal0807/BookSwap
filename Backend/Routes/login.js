@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Middleware to log request time
 const timeLog = (req, res, next) => {
-  console.log('Time: ', new Date().toISOString());
+  // console.log('Time: ', new Date().toISOString());
   next();
 };
 router.use(timeLog);

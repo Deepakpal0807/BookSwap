@@ -36,7 +36,7 @@ const Search = () => {
         Object.entries(data).map(([key, value]) => [key, value ? value.toUpperCase() : ''])
       );
 
-      console.log(upperCaseData);
+      // console.log(upperCaseData);
 
       const queryParams = new URLSearchParams(upperCaseData).toString();
       const request = {
@@ -56,16 +56,16 @@ const Search = () => {
       // Update background height based on search results and screen width
       updateBackgroundHeight(result.length);
 
-      console.log(result);
+      // console.log(result);
     } catch (error) {
-      console.error('Fetch error:', error);
+      // console.error('Fetch error:', error);
     }
   };
 
   useEffect(() => {
     // Update background height on window resize
     const handleResize = () => updateBackgroundHeight(searchResults.length);
-    console.log(searchResults);
+    // console.log(searchResults);
     // Add resize event listener
     window.addEventListener('resize', handleResize);
 
@@ -80,8 +80,8 @@ const Search = () => {
       <Navbar />
       
       <div className="flex flex-col justify-center items-center"
-        style={{ background: 'radial-gradient(125% 125% at 50% 10%, #000 40%, #63e 100%)' }}>
-        <div className="absolute inset-0 -z-10 h-full w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+      >
+        <div className="fixed inset-0 -z-10 h-[100vh] w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
         <div className="px-8 pt-8 w-full"> {/* Added w-full */}
         
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-4 w-full"> {/* Added w-full */}
@@ -149,7 +149,7 @@ const Search = () => {
                       <img
                         src={book.images[0]}
                         alt={`Image of ${book.bookName}`}
-                        className='w-[80px] md:w-[100px] object-cover h-auto mx-3 mb-3 md:mb-0 rounded-2xl border-4 border-white'
+                        className='w-[80px] md:w-[100px] object-cover h-auto mx-3 mb-3 md:mb-0 rounded-2xl border-4 border-white '
                       />
                       {book.images.length > 1 && (
                         <img
@@ -177,7 +177,15 @@ const Search = () => {
             ))}
           </ul>
         ) : (
-          <p>No results found</p>
+          <div>
+            <div className='flex justify-center text-2xl font-serif text-white'>No results found
+          </div>
+          <div className='flex justify-center text-2xl font-serif text-white'>
+            Search for books..
+          </div>
+          </div>
+          
+          
         )}
         <Suspense fallback={<div>Loading...</div>}>
           {selectedBook && (

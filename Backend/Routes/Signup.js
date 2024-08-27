@@ -3,7 +3,7 @@ const router = express.Router()
 
 // middleware that is specific to this router
 const timeLog = (req, res, next) => {
-  console.log('Time: ');
+  // console.log('Time: ');
   next()
 }
 router.use(timeLog)

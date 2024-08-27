@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Middleware to log request time
 const timeLog = (req, res, next) => {
-  console.log('Time: ', new Date().toISOString());
+//   console.log('Time: ', new Date().toISOString());
   next();
 };
 router.use(timeLog);
@@ -15,7 +15,7 @@ const User = require('../Models/Book');
 router.get('/', async (req, res) => {
     try {
         const { email } = req.query;
-        console.log('email:', email); // This will specifically log the email
+        // console.log('email:', email); // This will specifically log the email
         
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
