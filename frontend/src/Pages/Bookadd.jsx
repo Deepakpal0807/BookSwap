@@ -316,7 +316,7 @@ const Bookadd = () => {
                         <button
                             type="submit"
                             disabled={isadd}
-                            className={`w-1/2 p-2 mt-4 font-bold text-white rounded-xl ${isadd ? 'bg-gray-500' : 'bg-blue-600 hover:bg-blue-800'} `}
+                            className={`w-1/2 p-2 mt-4 font-bold text-white rounded-xl ${isadd ? 'bg-gray-500' : 'bg-purple-600 hover:bg-purple-800'} `}
                         >
                             {isadd ? 'Uploading...' : 'Submit'}
                         </button>

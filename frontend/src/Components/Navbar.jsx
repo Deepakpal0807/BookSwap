@@ -62,23 +62,23 @@ const Navbar = () => {
         theme="dark"
       />
 
-      <nav className="navbar navbar-expand-lg navbar-light bg-light flex justify-between px-4 py-4 bg-purple-600 items-center">
-        <div className='left text-white font-bold text-2xl font-serif flex gap-4 cursor' onClick={() => navigate('/')}>
+      <nav className="flex justify-between px-4 py-4 items-center bg-purple-600 ">
+        <div className='left text-white font-bold text-2xl font-serif flex gap-4' onClick={() => navigate('/')}>
           <div>
             <img src="../Images/favicon-32x32.png" alt="Logo" />
           </div>
-          <div>
+          <div className='font-serif text-black'>
             Book Swap
           </div>
         </div>
         <div className='right flex gap-2 items-center'>
-          <div className='md:hidden text-white'>
+          <div className='md:hidden text-2xl'>
             <IconButton size="large" color="inherit" onClick={toggleMenu}>
               {menuOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
           </div>
           {/* Icons in Navbar (Visible only on md and larger screens) */}
-          <div className="hidden md:flex gap-2">
+          <div className="hidden md:flex gap-2 ">
             <Tooltip title="Home">
               <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
                 <HomeIcon />
