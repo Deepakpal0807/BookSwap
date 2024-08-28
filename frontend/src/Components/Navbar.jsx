@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton, Tooltip } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
-import { Logout as LogoutIcon, Add as AddIcon, Search as SearchIcon, Person as PersonIcon, Home as HomeIcon } from "@mui/icons-material";
+import { Logout as LogoutIcon, Add as AddIcon, Search as SearchIcon, Person as PersonIcon, Home as HomeIcon, Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from 'react-redux';
-import { clearUser, setUser } from '../redux/User/userslice'; // Adjust the import path as needed
+import { clearUser, setUser } from '../redux/User/userslice';
 import { ToastContainer, toast, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { clearBooksByGenre, clearUserEmail } from "../redux/Book/Bookslice";
@@ -12,11 +12,12 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.user);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = () => {
     if (window.confirm("Are you sure you want to logout?")) {
       localStorage.removeItem('user');
-      dispatch(clearUser()); // Clears the user data in Redux
+      dispatch(clearUser());
       dispatch(clearBooksByGenre());
       dispatch(clearUserEmail());
       toast.success('Logged out successfully!', {
@@ -30,20 +31,21 @@ const Navbar = () => {
         theme: "dark",
         transition: Bounce,
       });
-      navigate('/login'); // Redirects to the login page
+      navigate('/login');
     }
   };
 
   useEffect(() => {
-    // Retrieve user data from local storage
     const userData = localStorage.getItem('user');
     if (userData) {
-      // Parse the JSON string back to an object
       const user = JSON.parse(userData);
-      // Dispatch the user data to Redux
       dispatch(setUser(user));
     }
   }, [dispatch]);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
 
   return (
     <div>
@@ -61,42 +63,76 @@ const Navbar = () => {
       />
 
       <nav className="navbar navbar-expand-lg navbar-light bg-light flex justify-between px-4 py-4 bg-purple-600 items-center">
-        <div className='left text-white font-bold text-2xl font-serif flex gap-4'>
+        <div className='left text-white font-bold text-2xl font-serif flex gap-4 cursor' onClick={() => navigate('/')}>
           <div>
-            <img src="../Images/favicon-32x32.png" alt="Logo" /> {/* Ensure this path is correct relative to the component */}
+            <img src="../Images/favicon-32x32.png" alt="Logo" />
           </div>
           <div>
             Book Swap
           </div>
         </div>
-        <div className='right flex gap-2'>
-          <Tooltip title="Home">
-            <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
-              <HomeIcon />
+        <div className='right flex gap-2 items-center'>
+          <div className='md:hidden text-white'>
+            <IconButton size="large" color="inherit" onClick={toggleMenu}>
+              {menuOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
-          </Tooltip>
-          <Tooltip title="Search">
-            <IconButton size="large" color="inherit" onClick={() => navigate('/search')}>
-              <SearchIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Add">
-            <IconButton size="large" color="inherit" onClick={() => navigate('/addbook')}>
-              <AddIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Profile">
-            <IconButton size="large" color="inherit" onClick={() => navigate(`/profile/${user.userid}`)}>
-              <PersonIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Logout">
-            <IconButton size="large" color="inherit" onClick={logout}>
-              <LogoutIcon />
-            </IconButton>
-          </Tooltip>
+          </div>
+          {/* Icons in Navbar (Visible only on md and larger screens) */}
+          <div className="hidden md:flex gap-2">
+            <Tooltip title="Home">
+              <IconButton size="large" color="inherit" onClick={() => navigate('/')}>
+                <HomeIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Search">
+              <IconButton size="large" color="inherit" onClick={() => navigate('/search')}>
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add">
+              <IconButton size="large" color="inherit" onClick={() => navigate('/addbook')}>
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Profile">
+              <IconButton size="large" color="inherit" onClick={() => navigate(`/profile/${user.userid}`)}>
+                <PersonIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Logout">
+              <IconButton size="large" color="inherit" onClick={logout}>
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
         </div>
       </nav>
+
+      {/* Icons list below navbar (Visible only on small screens) */}
+      {menuOpen && (
+        <div className="md:hidden flex flex-col items-start gap-4 mt-4 px-4">
+          <div className="flex items-center gap-2 text-white cursor-pointer" onClick={() => navigate('/')}>
+            <HomeIcon />
+            <span >Home</span>
+          </div>
+          <div className="flex items-center gap-2 text-white cursor-pointer" onClick={() => navigate('/search')}>
+            <SearchIcon />
+            <span >Search</span>
+          </div>
+          <div className="flex items-center gap-2 text-white cursor-pointer" onClick={() => navigate('/addbook')}>
+            <AddIcon />
+            <span >Add</span>
+          </div>
+          <div className="flex items-center gap-2 text-white cursor-pointer " onClick={() => navigate(`/profile/${user.userid}`)}>
+            <PersonIcon />
+            <span >Profile</span>
+          </div>
+          <div className="flex items-center gap-2 text-white cursor-pointer" onClick={logout}>
+            <LogoutIcon />
+            <span >Logout</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

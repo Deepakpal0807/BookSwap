@@ -50,12 +50,12 @@ const Home = () => {
                 {Object.keys(groupedBooks).map((genre, index) => (
                     <div key={index} className="genre-section">
                         <h2 className="text-white font-serif border-b-2 text-2xl mb-4 px-4 pt-8">{genre}</h2>
-                        <ul className="flex flex-row  overflow-scroll scrollbar-hide mt-4 border border-white bg-gray-700 py-4 rounded-2xl">
+                        <ul className="flex flex-row  overflow-scroll scrollbar-hide mt-4 border border-white bg-gray-900 py-4 rounded-2xl">
                         <div class="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
                             {groupedBooks[genre].map((book, bookIndex) => (
                                 <li
                                     key={bookIndex}
-                                    className="text-white min-w-32 rounded-2xl mx-3 h-48 border border-white justify-center items-center flex flex-col overflow-hidden text-center cursor-pointer"
+                                    className="text-white min-w-32 rounded-2xl mx-3 h-48 border border-white justify-center items-center flex flex-col overflow-hidden text-center cursor-pointer bg-black"
                                     onClick={() => onBookClick(book)} // Trigger modal on click
                                 >
                                     <img src={book.images[0]} alt={book.bookName} className="rounded-2xl w-24 h-28" />
